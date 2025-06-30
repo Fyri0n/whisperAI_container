@@ -1,0 +1,19 @@
+services:
+  whisper:
+    # Comment out the build directive to avoid building in Portainer
+    # build: .
+    image: ${DOCKER_REGISTRY-}whisperai:latest
+    container_name: whisperai
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "4G"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
