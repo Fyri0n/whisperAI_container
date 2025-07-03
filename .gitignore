@@ -24,7 +24,6 @@ venv/
 ENV/
 
 # Audio files
-*.wav
 *.mp3
 *.m4a
 *.flac
