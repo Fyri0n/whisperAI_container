@@ -153,7 +153,3 @@ You can also use the test script provided:
 ```bash
 python test/test_container_api.py
 ```
-
-## Last Updated
-
-October 4, 2023

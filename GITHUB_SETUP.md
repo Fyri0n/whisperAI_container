@@ -122,7 +122,3 @@ jobs:
     - name: Test the Docker image
       run: docker-compose up -d && sleep 10 && python test/test_container_api.py
 ```
-
-## Last Updated
-
-October 4, 2023
