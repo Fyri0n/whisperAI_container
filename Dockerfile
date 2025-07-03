@@ -22,8 +22,13 @@ COPY --from=build /usr/local/bin /usr/local/bin
 # Install runtime tools
 RUN apt-get update && apt-get install -y ffmpeg curl && apt-get clean
 
+# Copy application files
 COPY app.py .
 EXPOSE 5000
 
+# Create a wrapper file to initialize our class and expose the app
+# We can specify an initial model via environment variable
+RUN echo 'import os; from app import WhisperAPI; initial_model = os.environ.get("WHISPER_MODEL", "base"); whisper_api = WhisperAPI(initial_model); app = whisper_api.app' > wsgi.py
+
 # Increased timeout to handle longer audio processing
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app", "--workers=2", "--timeout", "300"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:app", "--workers=2", "--timeout", "300"]

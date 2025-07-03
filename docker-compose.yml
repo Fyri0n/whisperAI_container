@@ -1,19 +1,31 @@
+version: "3.8"
+
+name: whisperai-project
+
 services:
   whisper:
-    # Comment out the build directive to avoid building in Portainer
-    # build: .
-    image: ${DOCKER_REGISTRY-}whisperai:latest
-    container_name: whisperai
-    restart: unless-stopped
+    container_name: whisperai_container
+    build: .
     ports:
-      - "5000:5000"
+      - "5001:5000"
+    environment:
+      # Set initial Whisper model - options: tiny, base, small, medium, large
+      - WHISPER_MODEL=base
     deploy:
       resources:
         limits:
-          cpus: "2.0"
-          memory: "4G"
+          cpus: "1.0"
+          memory: "2G"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
+    volumes:
+      # Optional: For development, uncomment to mount the app.py file
+      # - ./app.py:/app/app.py
+      # For persistence of models (avoids redownloading)
+      - whisper-models:/root/.cache/whisper
+
+volumes:
+  whisper-models: # Persistent volume for model storage
