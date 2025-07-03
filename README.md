@@ -9,8 +9,14 @@ A containerized API for OpenAI's Whisper speech-to-text model with the ability t
 - Support for multiple model sizes (tiny, base, small, medium, large)
 - Docker container for easy deployment
 - Health check endpoint
+- GPU acceleration support (when available)
 
 ## Quick Start
+
+### Prerequisites
+
+- Docker and Docker Compose installed
+- CUDA-compatible GPU (optional, for GPU acceleration)
 
 ### Building and Running with Docker Compose
 
@@ -34,7 +40,7 @@ Response:
 ```json
 {
   "status": "ok",
-  "device": "cpu",
+  "device": "cpu",  # or "cuda" if GPU is available
   "current_model": "base"
 }
 ```
@@ -50,7 +56,7 @@ Response:
 {
   "current_model": "base",
   "available_models": ["tiny", "base", "small", "medium", "large"],
-  "device": "cpu"
+  "device": "cpu"  # or "cuda" if GPU is available
 }
 ```
 
@@ -103,6 +109,16 @@ Response:
 
 Choose the model size based on your hardware constraints and accuracy requirements.
 
+## GPU Support
+
+The container automatically detects and uses CUDA-compatible GPUs if available. You can verify GPU usage through the health check endpoint, which will show `"device": "cuda"` when a GPU is being used.
+
+To check GPU availability before running the container, use:
+
+```bash
+python check_gpu.py
+```
+
 ## Development
 
 To modify the application during development, you can uncomment the volume mount in `docker-compose.yml`:
@@ -131,3 +147,13 @@ curl -X POST http://localhost:5000/model \
 curl -X POST http://localhost:5000/whisper \
   -F "file=@test/TimCurry.wav"
 ```
+
+You can also use the test script provided:
+
+```bash
+python test/test_container_api.py
+```
+
+## Last Updated
+
+October 4, 2023

@@ -1,6 +1,6 @@
 # GitHub Setup Instructions
 
-Follow these steps to set up your WhisperAI Transcription Service on GitHub and prepare it for use with Portainer.
+Follow these steps to set up your WhisperAI Transcription Service on GitHub and prepare it for use with Portainer or other container orchestration tools.
 
 ## Step 1: Create a New GitHub Repository
 
@@ -17,6 +17,9 @@ Follow these steps to set up your WhisperAI Transcription Service on GitHub and 
 After creating the repository on GitHub, you'll see instructions to push an existing repository. Follow these steps:
 
 ```bash
+# Initialize Git repository (if not already done)
+git init
+
 # Add all files to Git
 git add .
 
@@ -32,7 +35,9 @@ git push -u origin main
 
 Replace `yourusername` with your actual GitHub username and `whisperai-container` with the name you chose for your repository.
 
-## Step 3: Setting Up Portainer with GitHub Repository
+## Step 3: Setting Up Container Orchestration
+
+### Using Portainer
 
 Once your code is on GitHub, you can easily deploy it using Portainer:
 
@@ -44,13 +49,28 @@ Once your code is on GitHub, you can easily deploy it using Portainer:
 6. Name your stack (e.g., "whisperai")
 7. Click "Deploy the stack"
 
-For more detailed instructions on using Portainer, refer to the PORTAINER.md file.
+### Using Docker Swarm
 
-## Additional Tips
+If you're using Docker Swarm:
 
-### Creating a Personal Access Token (if needed)
+```bash
+docker stack deploy -c docker-compose.yml whisperai
+```
 
-If you're using HTTPS to connect to GitHub and want to avoid entering your password each time:
+### Using Kubernetes
+
+For Kubernetes deployment, you may need to convert the docker-compose.yml to Kubernetes manifests using tools like Kompose:
+
+```bash
+kompose convert -f docker-compose.yml
+kubectl apply -f *.yaml
+```
+
+## Additional Authentication Tips
+
+### Creating a Personal Access Token (PAT)
+
+GitHub has phased out password authentication for Git operations. Use a Personal Access Token instead:
 
 1. Go to your GitHub account settings
 2. Select "Developer settings" > "Personal access tokens" > "Tokens (classic)"
@@ -59,7 +79,7 @@ If you're using HTTPS to connect to GitHub and want to avoid entering your passw
 5. Click "Generate token" and copy the token
 6. Use this token as your password when pushing to GitHub
 
-### Setting Up SSH Keys (alternative method)
+### Setting Up SSH Keys (Recommended)
 
 For more secure access:
 
@@ -75,3 +95,34 @@ For more secure access:
    ```
    git remote set-url origin git@github.com:yourusername/whisperai-container.git
    ```
+
+## GitHub Actions (CI/CD)
+
+You can also set up GitHub Actions to automatically build and test your container on each push:
+
+1. Create a `.github/workflows` directory in your repository
+2. Add a workflow file (e.g., `docker-build.yml`) with contents:
+
+```yaml
+name: Docker Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker-compose build
+    - name: Test the Docker image
+      run: docker-compose up -d && sleep 10 && python test/test_container_api.py
+```
+
+## Last Updated
+
+October 4, 2023
