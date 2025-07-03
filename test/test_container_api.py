@@ -5,7 +5,7 @@ import time
 import sys
 import json
 
-def test_whisper_api(base_url="http://localhost:5001"):
+def test_whisper_api(base_url="http://192.168.0.120:32770"):
     """
     Test the WhisperAI API running in a Docker container
     

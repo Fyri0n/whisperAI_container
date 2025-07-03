@@ -8,8 +8,20 @@ class WhisperAPI:
     VALID_MODELS = ["tiny", "base", "small", "medium", "large"]
     
     def __init__(self, initial_model="base"):
-        # Set device (GPU or CPU)
+        # Print CUDA availability info for debugging
+        print(f"CUDA is available: {torch.cuda.is_available()}")
+        if torch.cuda.is_available():
+            print(f"CUDA version: {torch.version.cuda}")
+            print(f"Number of CUDA devices: {torch.cuda.device_count()}")
+            for i in range(torch.cuda.device_count()):
+                print(f"Device {i}: {torch.cuda.get_device_name(i)}")
+        else:
+            print("No CUDA devices available.")
+            print("PyTorch built with CUDA: ", torch.backends.cudnn.is_available())
+            
+        # Set device (GPU or CPU) - force CUDA if available
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        print(f"Using device: {self.device}")
         
         # Track current model name
         self.current_model_name = initial_model if initial_model in self.VALID_MODELS else "base"

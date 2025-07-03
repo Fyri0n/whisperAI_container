@@ -11,11 +11,16 @@ services:
     environment:
       # Set initial Whisper model - options: tiny, base, small, medium, large
       - WHISPER_MODEL=base
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0
+    # These are the key settings for GPU access
     deploy:
       resources:
-        limits:
-          cpus: "1.0"
-          memory: "2G"
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"]
       interval: 30s

@@ -23,6 +23,9 @@ var/
 venv/
 ENV/
 
+# Images
+*.tar
+
 # Audio files
 *.mp3
 *.m4a
